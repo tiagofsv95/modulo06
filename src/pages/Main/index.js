@@ -64,6 +64,11 @@ export default class Main extends Component {
     const userExist = users.filter(user => user.login === newUser);
 
     if (userExist.length !== 0) {
+      this.setState({
+        newUser: '',
+        loading: false,
+      });
+
       Alert.alert(
         'Error',
         'Usuário já cadastrado.\nPor favor, insira um usuário válido.',
