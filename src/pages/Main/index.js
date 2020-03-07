@@ -61,37 +61,47 @@ export default class Main extends Component {
   handleAddUser = async () => {
     const { users, newUser } = this.state;
 
-    this.setState({ loading: true });
+    const userExist = users.filter(user => user.login === newUser);
 
-    try {
-      const response = await api.get(`/users/${newUser}`);
-
-      const data = {
-        name: response.data.name,
-        login: response.data.login,
-        bio: response.data.bio,
-        avatar: response.data.avatar_url,
-      };
-
-      this.setState({
-        users: [...users, data],
-        newUser: '',
-        loading: false,
-      });
-
-      Keyboard.dismiss();
-    } catch (error) {
-      this.setState({
-        newUser: '',
-        loading: false,
-      });
-
+    if (userExist.length !== 0) {
       Alert.alert(
         'Error',
-        'Erro ao buscar usuário.\nPor favor, insira um usuário válido.',
+        'Usuário já cadastrado.\nPor favor, insira um usuário válido.',
         [{ text: 'OK', onPress: () => {} }],
         { cancelable: false },
       );
+    } else {
+      this.setState({ loading: true });
+
+      try {
+        const response = await api.get(`/users/${newUser}`);
+        const data = {
+          name: response.data.name,
+          login: response.data.login,
+          bio: response.data.bio,
+          avatar: response.data.avatar_url,
+        };
+
+        this.setState({
+          users: [...users, data],
+          newUser: '',
+          loading: false,
+        });
+
+        Keyboard.dismiss();
+      } catch (error) {
+        this.setState({
+          newUser: '',
+          loading: false,
+        });
+
+        Alert.alert(
+          'Error',
+          'Erro ao buscar usuário.\nPor favor, insira um usuário válido.',
+          [{ text: 'OK', onPress: () => {} }],
+          { cancelable: false },
+        );
+      }
     }
   };
 
